@@ -1,0 +1,210 @@
+<title>Four-Day Iron Plan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column like a clipboard card; sticky day strip on top; each day color-coded by bumper-plate colour. */
+:root {
+  --bg: #f3f4f6; --surface: #ffffff; --fg: #1c2027; --muted: #5d6470; --line: #dfe2e7;
+  --plate: #1f5fbf; --plate-ink: #ffffff; --done: #2f8a4e;
+  --mon: #1f5fbf; --tue: #c8312b; --thu: #c99700; --sat: #2f8a4e; --off: #6b7280;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --body: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121418; --surface: #1b1e24; --fg: #e8eaee; --muted: #9aa1ad; --line: #2c3039;
+  --mon: #4f8ff0; --tue: #ef5a52; --thu: #f0c23a; --sat: #4cbf74; --off: #8b93a1; --done: #4cbf74; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121418; --surface: #1b1e24; --fg: #e8eaee; --muted: #9aa1ad; --line: #2c3039;
+  --mon: #4f8ff0; --tue: #ef5a52; --thu: #f0c23a; --sat: #4cbf74; --off: #8b93a1; --done: #4cbf74; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px 48px; }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px 8px; border-bottom: 1px solid var(--line); }
+h1 { font-family: var(--display); font-size: 1.6rem; letter-spacing: .02em; margin: 0 0 8px; text-transform: uppercase; text-wrap: balance; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.days button { font: 600 .8rem var(--body); padding: 8px 0; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.days button.train { color: var(--fg); }
+.days button[aria-current="true"] { background: var(--plate); border-color: var(--plate); color: var(--plate-ink); }
+.days button.today::after { content: "•"; margin-left: 2px; }
+.days button:focus-visible, a:focus-visible, .check:focus-visible, .rest:focus-visible { outline: 2px solid var(--plate); outline-offset: 2px; }
+.dayhead { display: flex; flex-direction: column; gap: 2px; margin: 18px 0 10px; padding-left: 12px; border-left: 6px solid var(--plate); }
+.dayhead h2 { font-family: var(--display); font-size: 1.9rem; line-height: 1.05; margin: 0; text-transform: uppercase; }
+.dayhead p { margin: 0; color: var(--muted); font-size: .9rem; }
+.block { font: 700 .75rem var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.card.isdone { border-color: var(--done); }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.card h3 { margin: 0; font-size: 1.02rem; font-weight: 600; min-width: 0; }
+.dose { font-family: var(--display); font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--plate); text-align: right; }
+.meta { color: var(--muted); font-size: .82rem; margin: 2px 0 8px; }
+.card p.desc { margin: 0 0 6px; }
+.card ul { margin: 0 0 10px; padding-left: 18px; }
+.card li { margin: 2px 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sets { display: flex; gap: 6px; flex-wrap: wrap; }
+.check { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line); background: transparent; color: var(--muted); font: 600 .8rem var(--body); cursor: pointer; }
+.check[aria-pressed="true"] { background: var(--done); border-color: var(--done); color: #fff; }
+.rest, .demo { font: 600 .82rem var(--body); padding: 7px 10px; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--fg); text-decoration: none; cursor: pointer; }
+.demo { color: var(--plate); }
+.note { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; color: var(--muted); font-size: .9rem; }
+.note b { color: var(--fg); }
+.moods { display: grid; gap: 10px; }
+.timer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--fg); color: var(--bg); padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; justify-content: space-between; align-items: center; font-family: var(--display); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.timer button { font: 600 .85rem var(--body); background: transparent; color: inherit; border: 1px solid currentColor; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+[hidden] { display: none !important; }
+footer { margin-top: 28px; color: var(--muted); font-size: .8rem; }
+@media (prefers-reduced-motion: no-preference) { .check { transition: background .15s, border-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Four-Day Iron Plan</h1>
+    <nav class="days" id="days" aria-label="Day of week"></nav>
+  </header>
+  <main id="main"></main>
+  <footer>Hypertrophy + conditioning · intermediate · Mon/Tue/Thu ≈55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Demo links open YouTube searches for form videos. Not medical advice: stop if something hurts.</footer>
+</div>
+<div class="timer" id="timer" hidden><span id="tleft">1:30</span><span>rest</span><button id="tstop" type="button">Stop</button></div>
+
+<script>
+const Y = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q + " proper form");
+// e(name, sets, reps, restSec, desc, cues, note?)
+const e = (n, s, r, rest, d, c, note) => ({ n, s, r, rest, d, c, note });
+
+const WARM = (min, x) => ({ block: "Warm-up", items: [e("General warm-up", 1, min, 0, x + ". Then rehearse the first lift with an empty bar and 2-3 lighter ramp-up sets.", ["Easy pace, nose breathing", "Ramp-up sets: 50% x 8, 70% x 5, 85% x 2"])] });
+
+const PLAN = {
+  mon: { title: "Upper A · Push emphasis", sub: "≈55 min · chest, shoulders, back, triceps", color: "--mon", blocks: [
+    WARM("5-8 min", "5 min rower, 2 x 15 band pull-aparts"),
+    { block: "Main work", items: [
+      e("Barbell Bench Press", 4, "6-8", 150, "Main chest builder. Lower the bar to mid-chest under control, press back up over the shoulders.", ["Shoulder blades pinched and down", "Feet planted, slight arch", "Bar touches lower chest, forearms vertical", "Leave 1-2 reps in reserve"]),
+      e("Chest-Supported Dumbbell Row", 4, "8-10", 90, "Chest on an incline bench removes lower-back strain so the upper back does the work.", ["Pull elbows toward hips", "Squeeze shoulder blades 1 s at top", "No shrugging"]),
+      e("Seated Dumbbell Shoulder Press", 3, "8-10", 90, "Press dumbbells overhead from shoulder height with the bench near upright.", ["Ribs down, glutes tight", "Elbows slightly in front of the body", "Stop just short of lockout clank"]),
+      e("Lat Pulldown", 3, "10-12", 75, "Pull the bar to the upper chest with a grip just outside shoulder width.", ["Lean back ~15°", "Drive elbows down to ribs", "Control the return for 2 s"]),
+      e("Cable Lateral Raise", 3, "12-15", 0, "Superset with the next exercise. One arm at a time from a low pulley.", ["Lead with the elbow", "Raise to shoulder height only", "Slow 2-3 s lowering"], "Superset A1"),
+      e("Rope Triceps Pushdown", 3, "10-12", 60, "Push the rope down and split the ends at the bottom.", ["Elbows pinned to sides", "Full lockout, spread the rope", "Don't lean over the stack"], "Superset A2 · rest after both")]},
+    { block: "Finisher", items: [e("Air Bike Intervals", 6, "20 s hard / 40 s easy", 0, "Six minutes of intervals on the air bike (or rower).", ["Hard = ~9/10 effort", "Easy = slow spin, recover breathing"])] }]},
+  tue: { title: "Lower A · Squat emphasis", sub: "≈55 min · quads, hamstrings, glutes, calves", color: "--tue", blocks: [
+    WARM("5-8 min", "4 min bike, 10 bodyweight squats, leg swings"),
+    { block: "Main work", items: [
+      e("Barbell Back Squat", 4, "6-8", 150, "Main leg builder. Bar on the upper back, sit down between the heels to at least parallel.", ["Brace: big breath into belly before each rep", "Knees track over toes", "Whole foot stays down", "Drive up chest-first"]),
+      e("Romanian Deadlift", 3, "8-10", 120, "Hip hinge for hamstrings and glutes. Bar slides down the thighs to mid-shin.", ["Soft knees, push hips back", "Bar stays touching legs", "Neutral spine: no rounding", "Stand tall by squeezing glutes"]),
+      e("Leg Press", 3, "10-12", 90, "High-volume quad work with low back support.", ["Feet shoulder width, mid-platform", "Lower until hips start to tuck, then stop", "Don't lock knees hard"]),
+      e("Seated Leg Curl", 3, "10-12", 60, "Isolate the hamstrings.", ["Pad just above heels", "Pause 1 s at full curl", "Slow 3 s return"]),
+      e("Standing Calf Raise", 3, "12-15", 60, "Machine or Smith machine calf raise.", ["Full stretch at the bottom, 1 s pause", "Rise onto big toe", "No bouncing"])]},
+    { block: "Finisher", items: [e("Kettlebell Swing EMOM", 6, "15 swings", 0, "Every minute on the minute for 6 minutes: 15 swings, rest for the rest of the minute.", ["It's a hinge, not a squat", "Snap the hips; arms just guide", "Bell floats to chest height"])] }]},
+  thu: { title: "Upper B · Pull emphasis", sub: "≈55 min · back, chest, arms, rear delts", color: "--thu", blocks: [
+    WARM("5-8 min", "5 min rower, 2 x 10 scap pull-ups"),
+    { block: "Main work", items: [
+      e("Pull-Up (weighted or assisted)", 4, "6-10", 120, "Vertical pull for lats. Add weight if you beat 10 reps; use the assist machine or a band if under 6.", ["Start from a dead hang", "Chest to bar, elbows to ribs", "No kipping"]),
+      e("Incline Dumbbell Press", 4, "8-10", 90, "Upper-chest press on a 30° bench.", ["Dumbbells over the upper chest", "Elbows ~45° from torso", "Deep stretch, controlled"]),
+      e("Seated Cable Row", 3, "10-12", 75, "Horizontal pull with a neutral (V) handle.", ["Sit tall, don't rock", "Pull handle to belly button", "Let shoulders stretch forward at the end"]),
+      e("Cable Fly", 3, "12-15", 60, "Chest isolation from mid-height pulleys (or pec-deck machine).", ["Slight bend in elbows, fixed", "Hug a big tree", "Squeeze 1 s in the middle"]),
+      e("EZ-Bar Curl", 3, "10-12", 0, "Superset with the next exercise.", ["Elbows still at sides", "No hip swing", "Lower for 2-3 s"], "Superset A1"),
+      e("Overhead Cable Triceps Extension", 3, "10-12", 60, "Rope from a low or mid pulley, facing away, arms overhead.", ["Elbows point forward, stay narrow", "Deep stretch behind the head", "Full lockout"], "Superset A2 · rest after both"),
+      e("Face Pull", 2, "15", 60, "Shoulder health and rear delts. Rope at face height.", ["Pull to the eyes, hands apart", "Thumbs point back at the end", "Light weight, strict"])]},
+    { block: "Finisher", items: [e("Rower Sprints", 4, "250 m hard", 60, "Four hard 250 m pieces with 60 s easy rest.", ["Legs, then body, then arms", "Damper 4-6", "Hold the same split every piece"])] }]},
+  sat: { title: "Saturday Long Session", sub: "≈2 h · posterior chain, upper pump, core, conditioning", color: "--sat", blocks: [
+    WARM("10 min", "5 min bike, hip openers, 2 x 10 glute bridges, empty-bar hinges"),
+    { block: "Block A · Heavy lower (≈40 min)", items: [
+      e("Conventional or Trap-Bar Deadlift", 4, "5", 180, "Heaviest lift of the week. Pick the bar up from the floor with a flat back.", ["Bar over mid-foot, shins close", "Pull slack out of the bar first", "Push the floor away", "Lock out with glutes, don't lean back"]),
+      e("Bulgarian Split Squat", 3, "8-10 each leg", 90, "Rear foot on a bench, dumbbells in hands.", ["Front foot far enough that heel stays down", "Drop straight down", "Slight forward lean for glutes"]),
+      e("Barbell Hip Thrust", 3, "8-12", 90, "Upper back on a bench, bar padded across the hips.", ["Chin tucked, ribs down", "Shins vertical at the top", "Pause 1 s at lockout"]),
+      e("Leg Extension", 3, "12-15", 60, "Quad isolation to finish the legs.", ["Pad on lower shin", "Squeeze 1 s at the top", "Slow 3 s lowering"])]},
+    { block: "Block B · Upper pump (≈30 min)", items: [
+      e("One-Arm Dumbbell Row", 3, "10-12 each arm", 60, "Hand and knee on a bench, row the dumbbell to the hip.", ["Flat back, hips square", "Pull toward the back pocket", "Full stretch at the bottom"]),
+      e("Machine Shoulder Press", 3, "10-12", 75, "Stable overhead press to add shoulder volume safely.", ["Seat so handles start at shoulder height", "Press without shrugging", "Control the way down"]),
+      e("Rear-Delt Fly (machine or cable)", 3, "15", 45, "Rear shoulders and upper back.", ["Arms nearly straight", "Move out wide, not back", "Light and strict"]),
+      e("Hammer Curl", 3, "12", 0, "Superset with dips.", ["Thumbs up the whole time", "Elbows still"], "Superset B1"),
+      e("Parallel Bar Dips", 3, "AMRAP (stop 1-2 shy of failure)", 75, "Chest and triceps. Use the assisted dip machine if needed.", ["Slight forward lean", "Lower until shoulders just below elbows", "Shoulders away from ears"], "Superset B2 · rest after both")]},
+    { block: "Block C · Core (≈12 min)", items: [
+      e("Hanging Knee Raise", 3, "12", 45, "Lower abs. Progress to straight-leg raises.", ["Curl pelvis up, don't just lift knees", "No swinging", "Slow lowering"]),
+      e("Cable Woodchop", 3, "12 each side", 45, "Rotational core from a high pulley to the opposite hip.", ["Arms long, turn from the torso", "Pivot the back foot", "Control the return"]),
+      e("Plank", 3, "45 s", 30, "Front plank on forearms.", ["Squeeze glutes and quads", "Straight line head to heels", "Breathe slowly"])]},
+    { block: "Block D · Conditioning (≈20 min)", items: [
+      e("Conditioning Circuit", 4, "rounds", 90, "250 m row → 12 goblet squats → 10 push-ups → 40 m farmer carry. Rest 90 s between rounds.", ["Steady, repeatable pace", "Keep push-ups strict; drop to knees if form breaks", "Carry: tall posture, tight grip"])]},
+    { block: "Cool-down (≈10 min)", items: [e("Easy walk + stretching", 1, "10 min", 0, "3-4 min easy walk, then hold each stretch 30-45 s.", ["Hip flexor stretch", "Hamstring stretch", "Doorway chest stretch", "Lat stretch on a rack"])]}]},
+};
+const OFF = { title: "Rest day · optional light cardio", sub: "Pick by how you feel today. Keep it easy so Monday-Saturday training stays strong.", color: "--off" };
+const MOODS = [
+  ["Low energy", "20-30 min easy walk outside, or a 10 min mobility flow (cat-cow, hip openers, thoracic rotations). Or rest completely: that's fine."],
+  ["Normal", "30 min Zone 2 on bike, incline treadmill walk or rower. You should be able to talk in full sentences (about 60-70% max heart rate)."],
+  ["Feeling good", "35-45 min Zone 2, finishing with 4 x 20 s faster pickups and 60 s easy between. Still not a hard workout."],
+];
+const PROG = "<b>Progression (double progression):</b> stay in the rep range with 1-2 reps left in the tank. When you hit the top of the range on every set, add the smallest load next time (2.5 kg barbell, 1-2 kg dumbbells). <b>Weeks 1-4</b> build; <b>week 5</b> deload: same weights, about 40% fewer sets.";
+
+const DAYS = [["mon","Mon"],["tue","Tue"],["wed","Wed"],["thu","Thu"],["fri","Fri"],["sat","Sat"],["sun","Sun"]];
+const todayKey = DAYS[(new Date().getDay() + 6) % 7][0];
+const dateKey = new Date().toISOString().slice(0, 10);
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k) || "{}"); } catch { return {}; } },
+                set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = s => s >= 60 ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : `${s} s`;
+
+function render(day) {
+  const p = PLAN[day] || OFF;
+  document.documentElement.style.setProperty("--plate", `var(${p.color})`);
+  document.querySelectorAll("#days button").forEach(b => b.setAttribute("aria-current", b.dataset.d === day));
+  const ticks = store.get("ticks-" + dateKey + "-" + day);
+  let html = `<div class="dayhead"><h2>${esc(p.title)}</h2><p>${esc(p.sub)}</p></div>`;
+  if (!PLAN[day]) {
+    html += `<div class="block">Choose by mood</div><div class="moods">` +
+      MOODS.map(([m, t]) => `<div class="card"><h3>${m}</h3><p class="desc">${t}</p></div>`).join("") + `</div>`;
+  } else {
+    p.blocks.forEach((b, bi) => {
+      html += `<div class="block">${esc(b.block)}</div>`;
+      b.items.forEach((x, i) => {
+        const id = bi + "-" + i, done = ticks[id] || [];
+        const all = done.filter(Boolean).length === x.s;
+        html += `<article class="card${all ? " isdone" : ""}" data-id="${id}">
+          <div class="row"><h3>${esc(x.n)}</h3><span class="dose">${x.s > 1 ? x.s + " × " : ""}${esc(x.r)}</span></div>
+          <div class="meta">${[x.rest ? "Rest " + fmt(x.rest) : "", x.note ? esc(x.note) : ""].filter(Boolean).join(" · ")}</div>
+          <p class="desc">${esc(x.d)}</p>
+          <ul>${x.c.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
+          <div class="actions">
+            <div class="sets">${Array.from({ length: x.s }, (_, k) =>
+              `<button class="check" type="button" data-k="${k}" aria-pressed="${!!done[k]}" aria-label="Set ${k + 1} done">${k + 1}</button>`).join("")}</div>
+            ${x.rest ? `<button class="rest" type="button" data-rest="${x.rest}">Rest ${fmt(x.rest)}</button>` : ""}
+            <a class="demo" href="${Y(x.n)}" target="_blank" rel="noopener">Form demo ↗</a>
+          </div></article>`;
+      });
+    });
+  }
+  html += `<div class="block">How to progress</div><div class="note">${PROG}</div>`;
+  document.getElementById("main").innerHTML = html;
+}
+
+let current = todayKey;
+function go(day) { current = DAYS.some(d => d[0] === day) ? day : todayKey; render(current); window.scrollTo(0, 0); }
+
+document.getElementById("days").innerHTML = DAYS.map(([k, l]) =>
+  `<button type="button" data-d="${k}" class="${PLAN[k] ? "train" : ""}${k === todayKey ? " today" : ""}">${l}</button>`).join("");
+document.getElementById("days").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (b) { location.hash = b.dataset.d; go(b.dataset.d); } });
+window.addEventListener("hashchange", () => go(location.hash.slice(1)));
+
+document.getElementById("main").addEventListener("click", ev => {
+  const c = ev.target.closest(".check"), r = ev.target.closest(".rest");
+  if (c) {
+    const card = c.closest(".card"), key = "ticks-" + dateKey + "-" + current, t = store.get(key);
+    const arr = t[card.dataset.id] || []; arr[+c.dataset.k] = !arr[+c.dataset.k]; t[card.dataset.id] = arr; store.set(key, t);
+    c.setAttribute("aria-pressed", !!arr[+c.dataset.k]);
+    card.classList.toggle("isdone", card.querySelectorAll('.check[aria-pressed="true"]').length === card.querySelectorAll(".check").length);
+    const restBtn = card.querySelector(".rest"); if (arr[+c.dataset.k] && restBtn) startTimer(+restBtn.dataset.rest);
+  }
+  if (r) startTimer(+r.dataset.rest);
+});
+
+let tint = null;
+function startTimer(sec) {
+  clearInterval(tint); const end = Date.now() + sec * 1000, box = document.getElementById("timer"), out = document.getElementById("tleft");
+  box.hidden = false;
+  const tick = () => { const left = Math.max(0, Math.round((end - Date.now()) / 1000));
+    out.textContent = left ? fmt(left).replace(" s", "s") : "Go!"; if (!left) { clearInterval(tint); setTimeout(() => box.hidden = true, 3000); } };
+  tick(); tint = setInterval(tick, 500);
+}
+document.getElementById("tstop").addEventListener("click", () => { clearInterval(tint); document.getElementById("timer").hidden = true; });
+
+go(location.hash.slice(1) || todayKey);
+</script>
