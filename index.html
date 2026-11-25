@@ -1,7 +1,13 @@
+<!doctype html>
+<html lang="en">
 <meta charset="utf-8">
-<title>Four-Day Iron Plan</title>
+<title>Iron Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1c2027">
+<meta name="description" content="Four-day hypertrophy gym program with form cues, photos, set ticks and a rest timer.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap">
 <style>
 /* Layout: one narrow column like a clipboard card; sticky day strip on top; each day color-coded by bumper-plate colour. */
@@ -18,7 +24,10 @@
 :root[data-theme="dark"] {
   --bg: #121418; --surface: #1b1e24; --fg: #e8eaee; --muted: #9aa1ad; --line: #2c3039;
   --mon: #4f8ff0; --tue: #ef5a52; --thu: #f0c23a; --sat: #4cbf74; --off: #8b93a1; --done: #4cbf74; color-scheme: dark }
-body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+*, *::before, *::after { box-sizing: border-box; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); -webkit-text-size-adjust: 100%; }
+img { max-width: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
 .wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px 48px; }
 header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px 8px; border-bottom: 1px solid var(--line); }
@@ -66,7 +75,7 @@ footer { margin-top: 28px; color: var(--muted); font-size: .8rem; }
 
 <div class="wrap">
   <header class="top">
-    <h1>Four-Day Iron Plan</h1>
+    <h1>Iron Plan</h1>
     <nav class="days" id="days" aria-label="Day of week"></nav>
   </header>
   <main id="main"></main>
@@ -222,4 +231,12 @@ function startTimer(sec) {
 document.getElementById("tstop").addEventListener("click", () => { clearInterval(tint); document.getElementById("timer").hidden = true; });
 
 go(location.hash.slice(1) || todayKey);
+
+// Offline + updates: the service worker serves the app offline and fetches the newest
+// version whenever online; when a new version takes over, reload once to show it.
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  let reloaded = false; const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+  navigator.serviceWorker.register("sw.js").then(reg => reg.update()).catch(() => {});
+}
 </script>
