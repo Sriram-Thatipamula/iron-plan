@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Four-Day Iron Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -38,6 +39,11 @@ h1 { font-family: var(--display); font-size: 1.6rem; letter-spacing: .02em; marg
 .card h3 { margin: 0; font-size: 1.02rem; font-weight: 600; min-width: 0; }
 .dose { font-family: var(--display); font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--plate); text-align: right; }
 .muscles { font: 600 .75rem var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--plate); margin-top: 4px; }
+.anim { position: relative; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 8px; overflow: hidden; background: var(--line); margin: 6px 0 10px; }
+.anim img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.anim.two .f1 { animation: flip 2.4s steps(1, end) infinite; }
+@keyframes flip { 0% { opacity: 0; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .anim.two { aspect-ratio: 3 / 1; } .anim.two img { position: static; width: 50%; float: left; } .anim.two .f1 { animation: none; } }
 .meta { color: var(--muted); font-size: .82rem; margin: 2px 0 8px; }
 .card p.desc { margin: 0 0 6px; }
 .card ul { margin: 0 0 10px; padding-left: 18px; }
@@ -64,7 +70,7 @@ footer { margin-top: 28px; color: var(--muted); font-size: .8rem; }
     <nav class="days" id="days" aria-label="Day of week"></nav>
   </header>
   <main id="main"></main>
-  <footer>Hypertrophy · intermediate · Mon/Tue/Thu ≈50-55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Pictures and Video links open image and YouTube searches for each movement. Not medical advice: stop if something hurts.</footer>
+  <footer>Hypertrophy · intermediate · Mon/Tue/Thu ≈50-55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Photos: free-exercise-db (public domain), flipping between start and end position. Pictures and Video links open image and YouTube searches. Not medical advice: stop if something hurts.</footer>
 </div>
 <div class="timer" id="timer" hidden><span id="tleft">1:30</span><span>rest</span><button id="tstop" type="button">Stop</button></div>
 
@@ -128,6 +134,8 @@ const PLAN = {
       e("Full-Body Circuit", "Whole body", 4, "rounds", 90, "250 m row → 12 goblet squats → 10 push-ups → 40 m farmer carry. Rest 90 s between rounds.", ["Steady, repeatable pace", "Keep push-ups strict; drop to knees if form breaks", "Carry: tall posture, tight grip"], "", "goblet squat farmer carry")]},
     { block: "Cool-down (≈10 min)", items: [e("Easy walk + stretching", "Whole body", 1, "10 min", 0, "3-4 min easy walk, then hold each stretch 30-45 s.", ["Hip flexor stretch", "Hamstring stretch", "Doorway chest stretch", "Lat stretch on a rack"], "", "post workout stretches")]}]},
 };
+// Start/end photos: free-exercise-db (github.com/yuhonas/free-exercise-db), public domain (Unlicense). Only exact, form-checked matches.
+const PHOTOS = {"Barbell Bent-Over Row": ["photos/Bent_Over_Barbell_Row-0.jpg", "photos/Bent_Over_Barbell_Row-1.jpg"], "Lat Pulldown": ["photos/Full_Range-Of-Motion_Lat_Pulldown-0.jpg", "photos/Full_Range-Of-Motion_Lat_Pulldown-1.jpg"], "Chest-Supported Dumbbell Row": ["photos/Dumbbell_Incline_Row-0.jpg", "photos/Dumbbell_Incline_Row-1.jpg"], "Seated Dumbbell Shoulder Press": ["photos/Dumbbell_Shoulder_Press-0.jpg", "photos/Dumbbell_Shoulder_Press-1.jpg"], "Face Pull": ["photos/Face_Pull-0.jpg", "photos/Face_Pull-1.jpg"], "Barbell Back Squat": ["photos/Barbell_Full_Squat-0.jpg", "photos/Barbell_Full_Squat-1.jpg"], "Leg Extension": ["photos/Leg_Extensions-0.jpg", "photos/Leg_Extensions-1.jpg"], "Seated Leg Curl": ["photos/Seated_Leg_Curl-0.jpg", "photos/Seated_Leg_Curl-1.jpg"], "Barbell Bench Press": ["photos/Barbell_Bench_Press_-_Medium_Grip-0.jpg", "photos/Barbell_Bench_Press_-_Medium_Grip-1.jpg"], "Incline Dumbbell Press": ["photos/Incline_Dumbbell_Press-0.jpg", "photos/Incline_Dumbbell_Press-1.jpg"], "Seated Cable Row": ["photos/Seated_Cable_Rows-0.jpg", "photos/Seated_Cable_Rows-1.jpg"], "Cable Lateral Raise": ["photos/Standing_Low-Pulley_Deltoid_Raise-0.jpg", "photos/Standing_Low-Pulley_Deltoid_Raise-1.jpg"], "Rope Triceps Pushdown": ["photos/Triceps_Pushdown_-_Rope_Attachment-0.jpg", "photos/Triceps_Pushdown_-_Rope_Attachment-1.jpg"], "Overhead Cable Triceps Extension": ["photos/Cable_Rope_Overhead_Triceps_Extension-0.jpg", "photos/Cable_Rope_Overhead_Triceps_Extension-1.jpg"], "Conventional or Trap-Bar Deadlift": ["photos/Barbell_Deadlift-0.jpg", "photos/Barbell_Deadlift-1.jpg"], "Bulgarian Split Squat": ["photos/Split_Squat_with_Dumbbells-0.jpg", "photos/Split_Squat_with_Dumbbells-1.jpg"], "Barbell Hip Thrust": ["photos/Barbell_Hip_Thrust-0.jpg", "photos/Barbell_Hip_Thrust-1.jpg"], "Leg Press": ["photos/Leg_Press-0.jpg", "photos/Leg_Press-1.jpg"], "One-Arm Dumbbell Row": ["photos/One-Arm_Dumbbell_Row-0.jpg", "photos/One-Arm_Dumbbell_Row-1.jpg"], "Machine Shoulder Press": ["photos/Machine_Shoulder_Military_Press-0.jpg", "photos/Machine_Shoulder_Military_Press-1.jpg"], "Rear-Delt Fly (machine or cable)": ["photos/Reverse_Machine_Flyes-0.jpg", "photos/Reverse_Machine_Flyes-1.jpg"], "Hammer Curl": ["photos/Hammer_Curls-0.jpg", "photos/Hammer_Curls-1.jpg"], "Parallel Bar Dips": ["photos/Dips_-_Chest_Version-0.jpg", "photos/Dips_-_Chest_Version-1.jpg"], "Hanging Knee Raise": ["photos/Hanging_Leg_Raise-0.jpg", "photos/Hanging_Leg_Raise-1.jpg"], "Cable Woodchop": ["photos/Standing_Cable_Wood_Chop-0.jpg", "photos/Standing_Cable_Wood_Chop-1.jpg"], "Plank": ["photos/Plank-1.jpg"]};
 const PATH = "<b>Road to your first pull-up:</b> <b>1.</b> Do the chin-ups and 5 s negatives as written until you can do 3 x 5 clean chin-ups. <b>2.</b> Switch negatives to overhand grip, slow them to 8 s, and add 2 x 20 s holds at the top of the bar. <b>3.</b> Try one strict pull-up at the start of Monday; once you get it, do 5 single reps with 90 s rest and add a rep per set over the following weeks. If you buy a resistance band, band-assisted pull-ups (3 x 6-8) also work.";
 const OFF = { title: "Rest day · optional light cardio", sub: "Pick by how you feel today. Keep it easy so Monday-Saturday training stays strong.", color: "--off" };
 const MOODS = [
@@ -164,6 +172,7 @@ function render(day) {
           <div class="row"><h3>${esc(x.n)}</h3><span class="dose">${x.s > 1 ? x.s + " × " : ""}${esc(x.r)}</span></div>
           <div class="muscles">${esc(x.m)}</div>
           <div class="meta">${[x.rest ? "Rest " + fmt(x.rest) : "", x.note ? esc(x.note) : ""].filter(Boolean).join(" · ")}</div>
+          ${PHOTOS[x.n] ? `<div class="anim${PHOTOS[x.n].length > 1 ? " two" : ""}" role="img" aria-label="${esc(x.n)} start and end position">${PHOTOS[x.n].map((s, k) => `<img src="${s}" alt="" loading="lazy" class="f${k}">`).join("")}</div>` : ""}
           <p class="desc">${esc(x.d)}</p>
           <ul>${x.c.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
           <div class="actions">
