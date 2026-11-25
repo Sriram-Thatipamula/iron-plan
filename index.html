@@ -3,83 +3,121 @@
 <meta charset="utf-8">
 <title>Iron Plan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1c2027">
+<meta name="theme-color" content="#fff6ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17121f" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Four-day hypertrophy gym program with form cues, photos, set ticks and a rest timer.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Iron Plan">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap">
 <style>
-/* Layout: one narrow column like a clipboard card; sticky day strip on top; each day color-coded by bumper-plate colour. */
+/* Layout: one narrow column on a warm ground with soft colour blobs and confetti dots; sticky day strip; each day keeps its plate colour. */
 :root {
-  --bg: #f3f4f6; --surface: #ffffff; --fg: #1c2027; --muted: #5d6470; --line: #dfe2e7;
-  --plate: #1f5fbf; --plate-ink: #ffffff; --done: #2f8a4e;
-  --mon: #1f5fbf; --tue: #c8312b; --thu: #c99700; --sat: #2f8a4e; --off: #6b7280;
+  --bg: #fff6ec; --surface: #ffffff; --fg: #24182f; --muted: #6b5c79; --line: #f1e1d3;
+  --glass: rgba(255, 246, 236, .88); --shadow: rgba(120, 60, 40, .08);
+  --mon: #2563eb; --tue: #d62839; --thu: #8f6a00; --sat: #15803d; --off: #7c5cbf; --done: #16a34a;
+  --plate: var(--mon); --ink: #ffffff;
+  --g1: #ff4f7b; --g2: #ff8a3d; --g3: #7b3ff2;
+  --blob1: rgba(255, 92, 138, .16); --blob2: rgba(255, 196, 61, .20); --blob3: rgba(58, 123, 255, .12); --blob4: rgba(47, 191, 113, .13);
+  --dots: rgba(123, 63, 242, .10);
   --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
   --body: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #121418; --surface: #1b1e24; --fg: #e8eaee; --muted: #9aa1ad; --line: #2c3039;
-  --mon: #4f8ff0; --tue: #ef5a52; --thu: #f0c23a; --sat: #4cbf74; --off: #8b93a1; --done: #4cbf74; color-scheme: dark } }
+  --bg: #17121f; --surface: #231b2e; --fg: #f4eefb; --muted: #b8aac8; --line: #3a2e4a;
+  --glass: rgba(23, 18, 31, .86); --shadow: rgba(0, 0, 0, .35);
+  --mon: #7aa7ff; --tue: #ff7a87; --thu: #f6c945; --sat: #4ade80; --off: #c4a8ff; --done: #4ade80; --ink: #1a1224;
+  --g1: #ff7aa0; --g2: #ffb35c; --g3: #b48cff;
+  --blob1: rgba(255, 92, 138, .14); --blob2: rgba(255, 196, 61, .08); --blob3: rgba(58, 123, 255, .14); --blob4: rgba(47, 191, 113, .08);
+  --dots: rgba(196, 168, 255, .10); color-scheme: dark } }
 :root[data-theme="dark"] {
-  --bg: #121418; --surface: #1b1e24; --fg: #e8eaee; --muted: #9aa1ad; --line: #2c3039;
-  --mon: #4f8ff0; --tue: #ef5a52; --thu: #f0c23a; --sat: #4cbf74; --off: #8b93a1; --done: #4cbf74; color-scheme: dark }
+  --bg: #17121f; --surface: #231b2e; --fg: #f4eefb; --muted: #b8aac8; --line: #3a2e4a;
+  --glass: rgba(23, 18, 31, .86); --shadow: rgba(0, 0, 0, .35);
+  --mon: #7aa7ff; --tue: #ff7a87; --thu: #f6c945; --sat: #4ade80; --off: #c4a8ff; --done: #4ade80; --ink: #1a1224;
+  --g1: #ff7aa0; --g2: #ffb35c; --g3: #b48cff;
+  --blob1: rgba(255, 92, 138, .14); --blob2: rgba(255, 196, 61, .08); --blob3: rgba(58, 123, 255, .14); --blob4: rgba(47, 191, 113, .08);
+  --dots: rgba(196, 168, 255, .10); color-scheme: dark }
 *, *::before, *::after { box-sizing: border-box; }
-html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); -webkit-text-size-adjust: 100%; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); -webkit-text-size-adjust: 100%; background: var(--bg); }
 img { max-width: 100%; }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+body { margin: 0; min-height: 100vh; color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5;
+  background:
+    radial-gradient(38rem 26rem at 105% -5%, var(--blob1), transparent 70%),
+    radial-gradient(30rem 24rem at -10% 30%, var(--blob2), transparent 70%),
+    radial-gradient(34rem 26rem at 110% 70%, var(--blob3), transparent 70%),
+    radial-gradient(28rem 22rem at -5% 105%, var(--blob4), transparent 70%),
+    radial-gradient(var(--dots) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
+    var(--bg);
+  background-attachment: fixed; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
-.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px 48px; }
-header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px 8px; border-bottom: 1px solid var(--line); }
-h1 { font-family: var(--display); font-size: 1.6rem; letter-spacing: .02em; margin: 0 0 8px; text-transform: uppercase; text-wrap: balance; }
-.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.days button { font: 600 .8rem var(--body); padding: 8px 0; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
-.days button.train { color: var(--fg); }
-.days button[aria-current="true"] { background: var(--plate); border-color: var(--plate); color: var(--plate-ink); }
-.days button.today::after { content: "•"; margin-left: 2px; }
+.squiggle { position: fixed; z-index: 0; pointer-events: none; width: 220px; opacity: .45; }
+.squiggle.a { top: 150px; right: -70px; color: var(--g1); transform: rotate(-12deg); }
+.squiggle.b { bottom: 70px; left: -80px; color: var(--g3); transform: rotate(8deg); }
+.wrap { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px 48px; }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 10px 8px 22px; margin-inline: -8px; border-radius: 0 0 16px 16px; }
+h1 { font-family: var(--display); font-size: 1.9rem; letter-spacing: .03em; margin: 0 0 8px; text-transform: uppercase; color: var(--g1);
+  background: linear-gradient(90deg, var(--g1), var(--g2) 55%, var(--g3)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.days button { --c: var(--off); font: 600 .8rem var(--body); padding: 8px 0 6px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; position: relative; }
+.days button[data-d="mon"] { --c: var(--mon); } .days button[data-d="tue"] { --c: var(--tue); }
+.days button[data-d="thu"] { --c: var(--thu); } .days button[data-d="sat"] { --c: var(--sat); }
+.days button.train { color: var(--fg); border-color: color-mix(in srgb, var(--c) 45%, var(--line)); }
+.days button::before { content: ""; display: block; width: 6px; height: 6px; border-radius: 50%; margin: 0 auto 3px; }
+.days button.train::before { background: var(--c); }
+.days button[aria-current="true"] { background: var(--c); border-color: var(--c); color: var(--ink); box-shadow: 0 4px 12px color-mix(in srgb, var(--c) 35%, transparent); }
+.days button[aria-current="true"]::before { background: var(--ink); }
+.days button.today::after { content: "today"; position: absolute; left: 0; right: 0; bottom: -16px; font-size: .6rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .days button:focus-visible, a:focus-visible, .check:focus-visible, .rest:focus-visible { outline: 2px solid var(--plate); outline-offset: 2px; }
-.dayhead { display: flex; flex-direction: column; gap: 2px; margin: 18px 0 10px; padding-left: 12px; border-left: 6px solid var(--plate); }
-.dayhead h2 { font-family: var(--display); font-size: 1.9rem; line-height: 1.05; margin: 0; text-transform: uppercase; }
+.dayhead { display: flex; flex-direction: column; gap: 4px; margin: 18px 0 10px; padding: 14px 16px; border-radius: 18px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--plate) 18%, var(--surface)), var(--surface) 75%); border: 1.5px solid color-mix(in srgb, var(--plate) 35%, var(--line)); }
+.dayhead h2 { font-family: var(--display); font-size: 2rem; line-height: 1.05; margin: 0; text-transform: uppercase; color: var(--plate); }
 .dayhead p { margin: 0; color: var(--muted); font-size: .9rem; }
-.block { font: 700 .75rem var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
-.card.isdone { border-color: var(--done); }
+.block { display: inline-block; font: 700 .72rem var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--plate); background: color-mix(in srgb, var(--plate) 12%, transparent); padding: 4px 10px; border-radius: 999px; margin: 22px 0 8px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: 0 6px 18px var(--shadow); }
+.card.isdone { border-color: var(--done); box-shadow: 0 0 0 2px color-mix(in srgb, var(--done) 30%, transparent), 0 6px 18px var(--shadow); }
 .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .card h3 { margin: 0; font-size: 1.02rem; font-weight: 600; min-width: 0; }
 .dose { font-family: var(--display); font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--plate); text-align: right; }
-.muscles { font: 600 .75rem var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--plate); margin-top: 4px; }
-.anim { position: relative; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 8px; overflow: hidden; background: var(--line); margin: 6px 0 10px; }
+.muscles { display: inline-block; font: 600 .7rem var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--plate); background: color-mix(in srgb, var(--plate) 10%, transparent); padding: 2px 8px; border-radius: 999px; margin-top: 6px; }
+.anim { position: relative; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 12px; overflow: hidden; background: color-mix(in srgb, var(--plate) 8%, var(--line)); margin: 6px 0 10px; }
 .anim img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .anim.two .f1 { animation: flip 2.4s steps(1, end) infinite; }
 @keyframes flip { 0% { opacity: 0; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .anim.two { aspect-ratio: 3 / 1; } .anim.two img { position: static; width: 50%; float: left; } .anim.two .f1 { animation: none; } }
-.meta { color: var(--muted); font-size: .82rem; margin: 2px 0 8px; }
+.meta { color: var(--muted); font-size: .82rem; margin: 4px 0 8px; }
 .card p.desc { margin: 0 0 6px; }
 .card ul { margin: 0 0 10px; padding-left: 18px; }
 .card li { margin: 2px 0; }
+.card li::marker { color: var(--plate); }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .sets { display: flex; gap: 6px; flex-wrap: wrap; }
-.check { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line); background: transparent; color: var(--muted); font: 600 .8rem var(--body); cursor: pointer; }
-.check[aria-pressed="true"] { background: var(--done); border-color: var(--done); color: #fff; }
-.rest, .demo { font: 600 .82rem var(--body); padding: 7px 10px; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--fg); text-decoration: none; cursor: pointer; }
-.demo { color: var(--plate); }
-.note { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; color: var(--muted); font-size: .9rem; }
+.check { width: 34px; height: 34px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--plate) 40%, var(--line)); background: transparent; color: var(--muted); font: 600 .8rem var(--body); cursor: pointer; }
+.check[aria-pressed="true"] { background: var(--done); border-color: var(--done); color: var(--ink); }
+.rest, .demo { font: 600 .82rem var(--body); padding: 7px 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); text-decoration: none; cursor: pointer; }
+.demo { color: var(--plate); border-color: color-mix(in srgb, var(--plate) 35%, var(--line)); background: color-mix(in srgb, var(--plate) 7%, var(--surface)); }
+.demo.db { color: var(--ink); background: var(--plate); border-color: var(--plate); }
+.note { background: color-mix(in srgb, var(--plate) 7%, var(--surface)); border: 1.5px dashed color-mix(in srgb, var(--plate) 40%, var(--line)); border-radius: 16px; padding: 12px 14px; color: var(--muted); font-size: .9rem; }
 .note b { color: var(--fg); }
 .moods { display: grid; gap: 10px; }
-.timer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--fg); color: var(--bg); padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; justify-content: space-between; align-items: center; font-family: var(--display); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
-.timer button { font: 600 .85rem var(--body); background: transparent; color: inherit; border: 1px solid currentColor; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+.timer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: linear-gradient(90deg, #d6336c, #e8590c 60%, #6f2dd6); color: #fff; padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; justify-content: space-between; align-items: center; font-family: var(--display); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.timer button { font: 600 .85rem var(--body); background: rgba(255,255,255,.18); color: inherit; border: 1px solid currentColor; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
 [hidden] { display: none !important; }
 footer { margin-top: 28px; color: var(--muted); font-size: .8rem; }
-@media (prefers-reduced-motion: no-preference) { .check { transition: background .15s, border-color .15s; } }
+@media (prefers-reduced-motion: no-preference) { .check, .days button { transition: background .15s, border-color .15s; } }
 </style>
 
+<svg class="squiggle a" viewBox="0 0 220 60" aria-hidden="true"><path d="M5 30 C 25 5, 45 55, 65 30 S 105 5, 125 30 S 165 55, 185 30 S 215 10, 218 22" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>
+<svg class="squiggle b" viewBox="0 0 220 60" aria-hidden="true"><path d="M5 30 C 25 5, 45 55, 65 30 S 105 5, 125 30 S 165 55, 185 30 S 215 10, 218 22" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>
 <div class="wrap">
   <header class="top">
     <h1>Iron Plan</h1>
     <nav class="days" id="days" aria-label="Day of week"></nav>
   </header>
   <main id="main"></main>
-  <footer>Hypertrophy · intermediate · Mon/Tue/Thu ≈50-55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Photos: free-exercise-db (public domain), flipping between start and end position. Pictures and Video links open image and YouTube searches. Not medical advice: stop if something hurts.</footer>
+  <footer>Hypertrophy · intermediate · Mon/Tue/Thu ≈50-55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Photos: free-exercise-db (public domain), flipping between start and end position. ▶ DeltaBolic opens an Andrew Kwong (DeltaBolic) YouTube Short for that exercise; Video and Pictures open YouTube and image searches. Not medical advice: stop if something hurts.</footer>
 </div>
 <div class="timer" id="timer" hidden><span id="tleft">1:30</span><span>rest</span><button id="tstop" type="button">Stop</button></div>
 
@@ -145,6 +183,8 @@ const PLAN = {
 };
 // Start/end photos: free-exercise-db (github.com/yuhonas/free-exercise-db), public domain (Unlicense). Only exact, form-checked matches.
 const PHOTOS = {"Barbell Bent-Over Row": ["photos/Bent_Over_Barbell_Row-0.jpg", "photos/Bent_Over_Barbell_Row-1.jpg"], "Chest-Supported Dumbbell Row": ["photos/Dumbbell_Incline_Row-0.jpg", "photos/Dumbbell_Incline_Row-1.jpg"], "Seated Dumbbell Shoulder Press": ["photos/Dumbbell_Shoulder_Press-0.jpg", "photos/Dumbbell_Shoulder_Press-1.jpg"], "Face Pull": ["photos/Face_Pull-0.jpg", "photos/Face_Pull-1.jpg"], "Barbell Back Squat": ["photos/Barbell_Full_Squat-0.jpg", "photos/Barbell_Full_Squat-1.jpg"], "Leg Extension": ["photos/Leg_Extensions-0.jpg", "photos/Leg_Extensions-1.jpg"], "Seated Leg Curl": ["photos/Seated_Leg_Curl-0.jpg", "photos/Seated_Leg_Curl-1.jpg"], "Barbell Bench Press": ["photos/Barbell_Bench_Press_-_Medium_Grip-0.jpg", "photos/Barbell_Bench_Press_-_Medium_Grip-1.jpg"], "Incline Dumbbell Press": ["photos/Incline_Dumbbell_Press-0.jpg", "photos/Incline_Dumbbell_Press-1.jpg"], "Seated Cable Row": ["photos/Seated_Cable_Rows-0.jpg", "photos/Seated_Cable_Rows-1.jpg"], "Cable Lateral Raise": ["photos/Standing_Low-Pulley_Deltoid_Raise-0.jpg", "photos/Standing_Low-Pulley_Deltoid_Raise-1.jpg"], "Rope Triceps Pushdown": ["photos/Triceps_Pushdown_-_Rope_Attachment-0.jpg", "photos/Triceps_Pushdown_-_Rope_Attachment-1.jpg"], "Overhead Cable Triceps Extension": ["photos/Cable_Rope_Overhead_Triceps_Extension-0.jpg", "photos/Cable_Rope_Overhead_Triceps_Extension-1.jpg"], "Conventional or Trap-Bar Deadlift": ["photos/Barbell_Deadlift-0.jpg", "photos/Barbell_Deadlift-1.jpg"], "Bulgarian Split Squat": ["photos/Split_Squat_with_Dumbbells-0.jpg", "photos/Split_Squat_with_Dumbbells-1.jpg"], "Leg Press": ["photos/Leg_Press-0.jpg", "photos/Leg_Press-1.jpg"], "One-Arm Dumbbell Row": ["photos/One-Arm_Dumbbell_Row-0.jpg", "photos/One-Arm_Dumbbell_Row-1.jpg"], "Machine Shoulder Press": ["photos/Machine_Shoulder_Military_Press-0.jpg", "photos/Machine_Shoulder_Military_Press-1.jpg"], "Rear-Delt Fly (machine or cable)": ["photos/Reverse_Machine_Flyes-0.jpg", "photos/Reverse_Machine_Flyes-1.jpg"], "Hammer Curl": ["photos/Hammer_Curls-0.jpg", "photos/Hammer_Curls-1.jpg"], "Parallel Bar Dips": ["photos/Dips_-_Chest_Version-0.jpg", "photos/Dips_-_Chest_Version-1.jpg"], "Hanging Knee Raise": ["photos/Hanging_Leg_Raise-0.jpg", "photos/Hanging_Leg_Raise-1.jpg"], "Cable Woodchop": ["photos/Standing_Cable_Wood_Chop-0.jpg", "photos/Standing_Cable_Wood_Chop-1.jpg"], "Plank": ["photos/Plank-1.jpg"], "45° Back Extension": ["photos/Hyperextensions_Back_Extensions-0.jpg", "photos/Hyperextensions_Back_Extensions-1.jpg"]};
+// Form videos: YouTube Shorts from Andrew Kwong (DeltaBolic), each confirmed on his channel to show this exact exercise.
+const DB = {"Barbell Bent-Over Row": "phVtqawIgbk", "Lat Pulldown": "bNmvKpJSWKM", "Chest-Supported Dumbbell Row": "2ByilQ4NaAs", "Seated Dumbbell Shoulder Press": "k6tzKisR3NY", "Face Pull": "ywQsaOTRjzM", "Barbell Back Squat": "dW3zj79xfrc", "Leg Extension": "uM86QE59Tgc", "Seated Leg Curl": "xdbEG3xGLI8", "Barbell Bench Press": "_FkbD0FhgVE", "Incline Dumbbell Press": "8fXfwG4ftaQ", "Seated Cable Row": "qD1WZ5pSuvk", "Cable Fly": "14VcTQz6h-8", "Cable Lateral Raise": "JlT2xB92lY8", "Overhead Cable Triceps Extension": "9Ark9S11uXw", "Conventional or Trap-Bar Deadlift": "xNwpvDuZJ3k", "Bulgarian Split Squat": "Cow3ESXmrTU", "45° Back Extension": "nGkITCtyMRc", "Leg Press": "EotSw18oR9w", "One-Arm Dumbbell Row": "WkFX6_GxAs8", "Machine Shoulder Press": "6v4nrRVySj0", "Rear-Delt Fly (machine or cable)": "H5UxZFl0lgk", "Parallel Bar Dips": "133lrcsQKC8", "Plank": "xe2MXatLTUw"};
 const PATH = "<b>Road to your first pull-up:</b> <b>1.</b> Do the chin-ups and 5 s negatives as written until you can do 3 x 5 clean chin-ups. <b>2.</b> Switch negatives to overhand grip, slow them to 8 s, and add 2 x 20 s holds at the top of the bar. <b>3.</b> Try one strict pull-up at the start of Monday; once you get it, do 5 single reps with 90 s rest and add a rep per set over the following weeks. If you buy a resistance band, band-assisted pull-ups (3 x 6-8) also work.";
 const OFF = { title: "Rest day · optional light cardio", sub: "Pick by how you feel today. Keep it easy so Monday-Saturday training stays strong.", color: "--off" };
 const MOODS = [
@@ -189,7 +229,7 @@ function render(day) {
               `<button class="check" type="button" data-k="${k}" aria-pressed="${!!done[k]}" aria-label="Set ${k + 1} done">${k + 1}</button>`).join("")}</div>
             ${x.rest ? `<button class="rest" type="button" data-rest="${x.rest}">Rest ${fmt(x.rest)}</button>` : ""}
             <a class="demo" href="${PIC(x.q || x.n)}" target="_blank" rel="noopener">Pictures ↗</a>
-            <a class="demo" href="${Y(x.q || x.n)}" target="_blank" rel="noopener">Video ↗</a>
+            ${DB[x.n] ? `<a class="demo db" href="https://www.youtube.com/shorts/${DB[x.n]}" target="_blank" rel="noopener">▶ DeltaBolic</a>` : `<a class="demo" href="${Y(x.q || x.n)}" target="_blank" rel="noopener">Video ↗</a>`}
           </div></article>`;
       });
     });
