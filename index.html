@@ -37,6 +37,7 @@ h1 { font-family: var(--display); font-size: 1.6rem; letter-spacing: .02em; marg
 .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .card h3 { margin: 0; font-size: 1.02rem; font-weight: 600; min-width: 0; }
 .dose { font-family: var(--display); font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--plate); text-align: right; }
+.muscles { font: 600 .75rem var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--plate); margin-top: 4px; }
 .meta { color: var(--muted); font-size: .82rem; margin: 2px 0 8px; }
 .card p.desc { margin: 0 0 6px; }
 .card ul { margin: 0 0 10px; padding-left: 18px; }
@@ -63,69 +64,71 @@ footer { margin-top: 28px; color: var(--muted); font-size: .8rem; }
     <nav class="days" id="days" aria-label="Day of week"></nav>
   </header>
   <main id="main"></main>
-  <footer>Hypertrophy + conditioning · intermediate · Mon/Tue/Thu ≈55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Demo links open YouTube searches for form videos. Not medical advice: stop if something hurts.</footer>
+  <footer>Hypertrophy · intermediate · Mon/Tue/Thu ≈50-55 min, Sat ≈2 h. Ticks reset each day and stay on this device only. Pictures and Video links open image and YouTube searches for each movement. Not medical advice: stop if something hurts.</footer>
 </div>
 <div class="timer" id="timer" hidden><span id="tleft">1:30</span><span>rest</span><button id="tstop" type="button">Stop</button></div>
 
 <script>
 const Y = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q + " proper form");
-// e(name, sets, reps, restSec, desc, cues, note?)
-const e = (n, s, r, rest, d, c, note) => ({ n, s, r, rest, d, c, note });
+const PIC = q => "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q + " exercise");
+// e(name, muscles, sets, reps, restSec, desc, cues, note?, pictureQuery?)
+const e = (n, m, s, r, rest, d, c, note, q) => ({ n, m, s, r, rest, d, c, note, q });
 
-const WARM = (min, x) => ({ block: "Warm-up", items: [e("General warm-up", 1, min, 0, x + ". Then rehearse the first lift with an empty bar and 2-3 lighter ramp-up sets.", ["Easy pace, nose breathing", "Ramp-up sets: 50% x 8, 70% x 5, 85% x 2"])] });
+const WARM = (min, x) => ({ block: "Warm-up", items: [e("General warm-up", "Whole body", 1, min, 0, x + ". Then rehearse the first lift with an empty bar and 2-3 lighter ramp-up sets.", ["Easy pace, nose breathing", "Ramp-up sets: 50% x 8, 70% x 5, 85% x 2"], "", "dynamic warm up gym")] });
 
 const PLAN = {
-  mon: { title: "Upper A · Push emphasis", sub: "≈55 min · chest, shoulders, back, triceps", color: "--mon", blocks: [
+  mon: { title: "Upper A · Back focus", sub: "≈55 min · lats, upper back, biceps, shoulders", color: "--mon", path: true, blocks: [
     WARM("5-8 min", "5 min rower, 2 x 15 band pull-aparts"),
     { block: "Main work", items: [
-      e("Barbell Bench Press", 4, "6-8", 150, "Main chest builder. Lower the bar to mid-chest under control, press back up over the shoulders.", ["Shoulder blades pinched and down", "Feet planted, slight arch", "Bar touches lower chest, forearms vertical", "Leave 1-2 reps in reserve"]),
-      e("Chest-Supported Dumbbell Row", 4, "8-10", 90, "Chest on an incline bench removes lower-back strain so the upper back does the work.", ["Pull elbows toward hips", "Squeeze shoulder blades 1 s at top", "No shrugging"]),
-      e("Seated Dumbbell Shoulder Press", 3, "8-10", 90, "Press dumbbells overhead from shoulder height with the bench near upright.", ["Ribs down, glutes tight", "Elbows slightly in front of the body", "Stop just short of lockout clank"]),
-      e("Lat Pulldown", 3, "10-12", 75, "Pull the bar to the upper chest with a grip just outside shoulder width.", ["Lean back ~15°", "Drive elbows down to ribs", "Control the return for 2 s"]),
-      e("Cable Lateral Raise", 3, "12-15", 0, "Superset with the next exercise. One arm at a time from a low pulley.", ["Lead with the elbow", "Raise to shoulder height only", "Slow 2-3 s lowering"], "Superset A1"),
-      e("Rope Triceps Pushdown", 3, "10-12", 60, "Push the rope down and split the ends at the bottom.", ["Elbows pinned to sides", "Full lockout, spread the rope", "Don't lean over the stack"], "Superset A2 · rest after both")]},
-    { block: "Finisher", items: [e("Air Bike Intervals", 6, "20 s hard / 40 s easy", 0, "Six minutes of intervals on the air bike (or rower).", ["Hard = ~9/10 effort", "Easy = slow spin, recover breathing"])] }]},
-  tue: { title: "Lower A · Squat emphasis", sub: "≈55 min · quads, hamstrings, glutes, calves", color: "--tue", blocks: [
+      e("Chin-Up (palms facing you)", "Lats, biceps", 3, "3-5", 120, "Hang from the bar with palms facing you, pull until your chin clears the bar. Stop 2 reps before you'd fail.", ["Start from a dead hang, arms straight", "Pull elbows down to your ribs", "Lower under control, no kipping"], "", "chin-up"),
+      e("Chin-Up Negative", "Lats, biceps", 2, "3 (5 s down)", 90, "Jump or step up so your chin is over the bar, then lower yourself as slowly as you can (aim for 5 seconds).", ["Use a box or bench to get to the top", "Fight gravity all the way down", "Reset feet on the box between reps"], "", "negative chin-up"),
+      e("Barbell Bent-Over Row", "Upper back, lats, rear shoulders", 4, "6-8", 120, "Hinge forward to about 45° and row the bar to your lower ribs.", ["Flat back, hips pushed back", "Pull bar to lower ribs, elbows back", "No jerking with the hips"], "", "barbell bent over row"),
+      e("Lat Pulldown", "Lats, biceps", 3, "10-12", 75, "Pull the bar to the upper chest with a grip just outside shoulder width. Builds the strength you need for pull-ups.", ["Lean back ~15°", "Drive elbows down to ribs", "Control the return for 2 s"], "", "lat pulldown"),
+      e("Chest-Supported Dumbbell Row", "Mid back, rear shoulders", 3, "10-12", 75, "Chest on an incline bench removes lower-back strain so the upper back does the work.", ["Pull elbows toward hips", "Squeeze shoulder blades 1 s at top", "No shrugging"], "", "chest supported dumbbell row"),
+      e("Seated Dumbbell Shoulder Press", "Shoulders, triceps", 3, "8-10", 90, "Press dumbbells overhead from shoulder height with the bench near upright.", ["Ribs down, glutes tight", "Elbows slightly in front of the body", "Stop just short of lockout clank"], "", "seated dumbbell shoulder press"),
+      e("EZ-Bar Curl", "Biceps", 3, "10-12", 0, "Superset with the next exercise.", ["Elbows still at sides", "No hip swing", "Lower for 2-3 s"], "Superset A1", "ez bar curl"),
+      e("Face Pull", "Rear shoulders, upper back", 3, "15", 60, "Rope at face height. Good for shoulder health and posture.", ["Pull to the eyes, hands apart", "Thumbs point back at the end", "Light weight, strict"], "Superset A2 · rest after both", "cable face pull")]}]},
+  tue: { title: "Lower A · Squat focus", sub: "≈50 min · quads, hamstrings, glutes, calves", color: "--tue", blocks: [
     WARM("5-8 min", "4 min bike, 10 bodyweight squats, leg swings"),
     { block: "Main work", items: [
-      e("Barbell Back Squat", 4, "6-8", 150, "Main leg builder. Bar on the upper back, sit down between the heels to at least parallel.", ["Brace: big breath into belly before each rep", "Knees track over toes", "Whole foot stays down", "Drive up chest-first"]),
-      e("Romanian Deadlift", 3, "8-10", 120, "Hip hinge for hamstrings and glutes. Bar slides down the thighs to mid-shin.", ["Soft knees, push hips back", "Bar stays touching legs", "Neutral spine: no rounding", "Stand tall by squeezing glutes"]),
-      e("Leg Press", 3, "10-12", 90, "High-volume quad work with low back support.", ["Feet shoulder width, mid-platform", "Lower until hips start to tuck, then stop", "Don't lock knees hard"]),
-      e("Seated Leg Curl", 3, "10-12", 60, "Isolate the hamstrings.", ["Pad just above heels", "Pause 1 s at full curl", "Slow 3 s return"]),
-      e("Standing Calf Raise", 3, "12-15", 60, "Machine or Smith machine calf raise.", ["Full stretch at the bottom, 1 s pause", "Rise onto big toe", "No bouncing"])]},
-    { block: "Finisher", items: [e("Kettlebell Swing EMOM", 6, "15 swings", 0, "Every minute on the minute for 6 minutes: 15 swings, rest for the rest of the minute.", ["It's a hinge, not a squat", "Snap the hips; arms just guide", "Bell floats to chest height"])] }]},
-  thu: { title: "Upper B · Pull emphasis", sub: "≈55 min · back, chest, arms, rear delts", color: "--thu", blocks: [
-    WARM("5-8 min", "5 min rower, 2 x 10 scap pull-ups"),
+      e("Barbell Back Squat", "Quads, glutes", 4, "6-8", 150, "Main leg builder. Bar on the upper back, sit down between the heels to at least parallel.", ["Brace: big breath into belly before each rep", "Knees track over toes", "Whole foot stays down", "Drive up chest-first"], "", "barbell back squat"),
+      e("Romanian Deadlift", "Hamstrings, glutes, lower back", 3, "8-10", 120, "Hip hinge for hamstrings and glutes. Bar slides down the thighs to mid-shin.", ["Soft knees, push hips back", "Bar stays touching legs", "Neutral spine: no rounding", "Stand tall by squeezing glutes"], "", "romanian deadlift"),
+      e("Leg Press", "Quads, glutes", 3, "10-12", 90, "High-volume quad work with low back support.", ["Feet shoulder width, mid-platform", "Lower until hips start to tuck, then stop", "Don't lock knees hard"], "", "leg press machine"),
+      e("Seated Leg Curl", "Hamstrings", 3, "10-12", 60, "Isolate the hamstrings.", ["Pad just above heels", "Pause 1 s at full curl", "Slow 3 s return"], "", "seated leg curl"),
+      e("Standing Calf Raise", "Calves", 3, "12-15", 60, "Machine or Smith machine calf raise.", ["Full stretch at the bottom, 1 s pause", "Rise onto big toe", "No bouncing"], "", "standing calf raise machine")]}]},
+  thu: { title: "Upper B · Chest focus", sub: "≈55 min · chest, shoulders, triceps, mid back", color: "--thu", blocks: [
+    WARM("5-8 min", "5 min rower, 2 x 15 band pull-aparts"),
     { block: "Main work", items: [
-      e("Pull-Up (weighted or assisted)", 4, "6-10", 120, "Vertical pull for lats. Add weight if you beat 10 reps; use the assist machine or a band if under 6.", ["Start from a dead hang", "Chest to bar, elbows to ribs", "No kipping"]),
-      e("Incline Dumbbell Press", 4, "8-10", 90, "Upper-chest press on a 30° bench.", ["Dumbbells over the upper chest", "Elbows ~45° from torso", "Deep stretch, controlled"]),
-      e("Seated Cable Row", 3, "10-12", 75, "Horizontal pull with a neutral (V) handle.", ["Sit tall, don't rock", "Pull handle to belly button", "Let shoulders stretch forward at the end"]),
-      e("Cable Fly", 3, "12-15", 60, "Chest isolation from mid-height pulleys (or pec-deck machine).", ["Slight bend in elbows, fixed", "Hug a big tree", "Squeeze 1 s in the middle"]),
-      e("EZ-Bar Curl", 3, "10-12", 0, "Superset with the next exercise.", ["Elbows still at sides", "No hip swing", "Lower for 2-3 s"], "Superset A1"),
-      e("Overhead Cable Triceps Extension", 3, "10-12", 60, "Rope from a low or mid pulley, facing away, arms overhead.", ["Elbows point forward, stay narrow", "Deep stretch behind the head", "Full lockout"], "Superset A2 · rest after both"),
-      e("Face Pull", 2, "15", 60, "Shoulder health and rear delts. Rope at face height.", ["Pull to the eyes, hands apart", "Thumbs point back at the end", "Light weight, strict"])]},
-    { block: "Finisher", items: [e("Rower Sprints", 4, "250 m hard", 60, "Four hard 250 m pieces with 60 s easy rest.", ["Legs, then body, then arms", "Damper 4-6", "Hold the same split every piece"])] }]},
-  sat: { title: "Saturday Long Session", sub: "≈2 h · posterior chain, upper pump, core, conditioning", color: "--sat", blocks: [
+      e("Barbell Bench Press", "Chest, front shoulders, triceps", 4, "6-8", 150, "Main chest builder. Lower the bar to mid-chest under control, press back up over the shoulders.", ["Shoulder blades pinched and down", "Feet planted, slight arch", "Bar touches lower chest, forearms vertical", "Leave 1-2 reps in reserve"], "", "barbell bench press"),
+      e("Incline Dumbbell Press", "Upper chest, front shoulders", 3, "8-10", 90, "Upper-chest press on a 30° bench.", ["Dumbbells over the upper chest", "Elbows ~45° from torso", "Deep stretch, controlled"], "", "incline dumbbell press"),
+      e("Seated Cable Row", "Mid back, lats", 3, "10-12", 75, "Horizontal pull with a neutral (V) handle. Balances all the pressing.", ["Sit tall, don't rock", "Pull handle to belly button", "Let shoulders stretch forward at the end"], "", "seated cable row"),
+      e("Cable Fly", "Chest", 3, "12-15", 60, "Chest isolation from mid-height pulleys (or pec-deck machine).", ["Slight bend in elbows, fixed", "Hug a big tree", "Squeeze 1 s in the middle"], "", "cable chest fly"),
+      e("Cable Lateral Raise", "Side shoulders", 3, "12-15", 45, "One arm at a time from a low pulley.", ["Lead with the elbow", "Raise to shoulder height only", "Slow 2-3 s lowering"], "", "cable lateral raise"),
+      e("Rope Triceps Pushdown", "Triceps", 3, "10-12", 0, "Superset with the next exercise. Push the rope down and split the ends at the bottom.", ["Elbows pinned to sides", "Full lockout, spread the rope", "Don't lean over the stack"], "Superset A1", "rope triceps pushdown"),
+      e("Overhead Cable Triceps Extension", "Triceps", 3, "10-12", 60, "Rope from a low or mid pulley, facing away, arms overhead.", ["Elbows point forward, stay narrow", "Deep stretch behind the head", "Full lockout"], "Superset A2 · rest after both", "overhead cable triceps extension")]}]},
+  sat: { title: "Saturday Long Session", sub: "≈2 h · legs, back, shoulders, arms, core, circuit", color: "--sat", path: true, blocks: [
     WARM("10 min", "5 min bike, hip openers, 2 x 10 glute bridges, empty-bar hinges"),
     { block: "Block A · Heavy lower (≈40 min)", items: [
-      e("Conventional or Trap-Bar Deadlift", 4, "5", 180, "Heaviest lift of the week. Pick the bar up from the floor with a flat back.", ["Bar over mid-foot, shins close", "Pull slack out of the bar first", "Push the floor away", "Lock out with glutes, don't lean back"]),
-      e("Bulgarian Split Squat", 3, "8-10 each leg", 90, "Rear foot on a bench, dumbbells in hands.", ["Front foot far enough that heel stays down", "Drop straight down", "Slight forward lean for glutes"]),
-      e("Barbell Hip Thrust", 3, "8-12", 90, "Upper back on a bench, bar padded across the hips.", ["Chin tucked, ribs down", "Shins vertical at the top", "Pause 1 s at lockout"]),
-      e("Leg Extension", 3, "12-15", 60, "Quad isolation to finish the legs.", ["Pad on lower shin", "Squeeze 1 s at the top", "Slow 3 s lowering"])]},
-    { block: "Block B · Upper pump (≈30 min)", items: [
-      e("One-Arm Dumbbell Row", 3, "10-12 each arm", 60, "Hand and knee on a bench, row the dumbbell to the hip.", ["Flat back, hips square", "Pull toward the back pocket", "Full stretch at the bottom"]),
-      e("Machine Shoulder Press", 3, "10-12", 75, "Stable overhead press to add shoulder volume safely.", ["Seat so handles start at shoulder height", "Press without shrugging", "Control the way down"]),
-      e("Rear-Delt Fly (machine or cable)", 3, "15", 45, "Rear shoulders and upper back.", ["Arms nearly straight", "Move out wide, not back", "Light and strict"]),
-      e("Hammer Curl", 3, "12", 0, "Superset with dips.", ["Thumbs up the whole time", "Elbows still"], "Superset B1"),
-      e("Parallel Bar Dips", 3, "AMRAP (stop 1-2 shy of failure)", 75, "Chest and triceps. Use the assisted dip machine if needed.", ["Slight forward lean", "Lower until shoulders just below elbows", "Shoulders away from ears"], "Superset B2 · rest after both")]},
+      e("Conventional or Trap-Bar Deadlift", "Glutes, hamstrings, back", 4, "5", 180, "Heaviest lift of the week. Pick the bar up from the floor with a flat back.", ["Bar over mid-foot, shins close", "Pull slack out of the bar first", "Push the floor away", "Lock out with glutes, don't lean back"], "", "conventional deadlift"),
+      e("Bulgarian Split Squat", "Quads, glutes", 3, "8-10 each leg", 90, "Rear foot on a bench, dumbbells in hands.", ["Front foot far enough that heel stays down", "Drop straight down", "Slight forward lean for glutes"], "", "bulgarian split squat dumbbell"),
+      e("Barbell Hip Thrust", "Glutes", 3, "8-12", 90, "Upper back on a bench, bar padded across the hips.", ["Chin tucked, ribs down", "Shins vertical at the top", "Pause 1 s at lockout"], "", "barbell hip thrust"),
+      e("Leg Extension", "Quads", 3, "12-15", 60, "Quad isolation to finish the legs.", ["Pad on lower shin", "Squeeze 1 s at the top", "Slow 3 s lowering"], "", "leg extension machine")]},
+    { block: "Block B · Upper (≈35 min)", items: [
+      e("One-Arm Dumbbell Row", "Lats, upper back", 3, "10-12 each arm", 60, "Hand and knee on a bench, row the dumbbell to the hip.", ["Flat back, hips square", "Pull toward the back pocket", "Full stretch at the bottom"], "", "one arm dumbbell row"),
+      e("Pull-Up Negative (overhand)", "Lats, upper back", 3, "3 (5 s down)", 90, "Palms facing away. Step up so your chin is over the bar, then lower as slowly as you can.", ["Shoulders pulled down, not shrugged", "Count 5 seconds on the way down", "Stop the set if you drop fast"], "", "negative pull-up"),
+      e("Machine Shoulder Press", "Shoulders, triceps", 3, "10-12", 75, "Stable overhead press to add shoulder volume safely.", ["Seat so handles start at shoulder height", "Press without shrugging", "Control the way down"], "", "machine shoulder press"),
+      e("Rear-Delt Fly (machine or cable)", "Rear shoulders", 3, "15", 45, "Rear shoulders and upper back.", ["Arms nearly straight", "Move out wide, not back", "Light and strict"], "", "reverse pec deck rear delt fly"),
+      e("Hammer Curl", "Biceps, forearms", 3, "12", 0, "Superset with dips.", ["Thumbs up the whole time", "Elbows still"], "Superset B1", "dumbbell hammer curl"),
+      e("Parallel Bar Dips", "Chest, triceps", 3, "max (stop 1-2 short of failure)", 75, "Lower between parallel bars and press back up. Use a box under your feet to help if needed.", ["Slight forward lean", "Lower until shoulders just below elbows", "Shoulders away from ears"], "Superset B2 · rest after both", "parallel bar dips")]},
     { block: "Block C · Core (≈12 min)", items: [
-      e("Hanging Knee Raise", 3, "12", 45, "Lower abs. Progress to straight-leg raises.", ["Curl pelvis up, don't just lift knees", "No swinging", "Slow lowering"]),
-      e("Cable Woodchop", 3, "12 each side", 45, "Rotational core from a high pulley to the opposite hip.", ["Arms long, turn from the torso", "Pivot the back foot", "Control the return"]),
-      e("Plank", 3, "45 s", 30, "Front plank on forearms.", ["Squeeze glutes and quads", "Straight line head to heels", "Breathe slowly"])]},
-    { block: "Block D · Conditioning (≈20 min)", items: [
-      e("Conditioning Circuit", 4, "rounds", 90, "250 m row → 12 goblet squats → 10 push-ups → 40 m farmer carry. Rest 90 s between rounds.", ["Steady, repeatable pace", "Keep push-ups strict; drop to knees if form breaks", "Carry: tall posture, tight grip"])]},
-    { block: "Cool-down (≈10 min)", items: [e("Easy walk + stretching", 1, "10 min", 0, "3-4 min easy walk, then hold each stretch 30-45 s.", ["Hip flexor stretch", "Hamstring stretch", "Doorway chest stretch", "Lat stretch on a rack"])]}]},
+      e("Hanging Knee Raise", "Lower abs", 3, "12", 45, "Hang from the bar and raise knees toward chest. Progress to straight-leg raises.", ["Curl pelvis up, don't just lift knees", "No swinging", "Slow lowering"], "", "hanging knee raise"),
+      e("Cable Woodchop", "Obliques, core", 3, "12 each side", 45, "Rotational core from a high pulley to the opposite hip.", ["Arms long, turn from the torso", "Pivot the back foot", "Control the return"], "", "cable woodchop"),
+      e("Plank", "Core", 3, "45 s", 30, "Front plank on forearms.", ["Squeeze glutes and quads", "Straight line head to heels", "Breathe slowly"], "", "forearm plank")]},
+    { block: "Block D · Circuit (≈20 min)", items: [
+      e("Full-Body Circuit", "Whole body", 4, "rounds", 90, "250 m row → 12 goblet squats → 10 push-ups → 40 m farmer carry. Rest 90 s between rounds.", ["Steady, repeatable pace", "Keep push-ups strict; drop to knees if form breaks", "Carry: tall posture, tight grip"], "", "goblet squat farmer carry")]},
+    { block: "Cool-down (≈10 min)", items: [e("Easy walk + stretching", "Whole body", 1, "10 min", 0, "3-4 min easy walk, then hold each stretch 30-45 s.", ["Hip flexor stretch", "Hamstring stretch", "Doorway chest stretch", "Lat stretch on a rack"], "", "post workout stretches")]}]},
 };
+const PATH = "<b>Road to your first pull-up:</b> <b>1.</b> Do the chin-ups and 5 s negatives as written until you can do 3 x 5 clean chin-ups. <b>2.</b> Switch negatives to overhand grip, slow them to 8 s, and add 2 x 20 s holds at the top of the bar. <b>3.</b> Try one strict pull-up at the start of Monday; once you get it, do 5 single reps with 90 s rest and add a rep per set over the following weeks. If you buy a resistance band, band-assisted pull-ups (3 x 6-8) also work.";
 const OFF = { title: "Rest day · optional light cardio", sub: "Pick by how you feel today. Keep it easy so Monday-Saturday training stays strong.", color: "--off" };
 const MOODS = [
   ["Low energy", "20-30 min easy walk outside, or a 10 min mobility flow (cat-cow, hip openers, thoracic rotations). Or rest completely: that's fine."],
@@ -159,6 +162,7 @@ function render(day) {
         const all = done.filter(Boolean).length === x.s;
         html += `<article class="card${all ? " isdone" : ""}" data-id="${id}">
           <div class="row"><h3>${esc(x.n)}</h3><span class="dose">${x.s > 1 ? x.s + " × " : ""}${esc(x.r)}</span></div>
+          <div class="muscles">${esc(x.m)}</div>
           <div class="meta">${[x.rest ? "Rest " + fmt(x.rest) : "", x.note ? esc(x.note) : ""].filter(Boolean).join(" · ")}</div>
           <p class="desc">${esc(x.d)}</p>
           <ul>${x.c.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
@@ -166,11 +170,13 @@ function render(day) {
             <div class="sets">${Array.from({ length: x.s }, (_, k) =>
               `<button class="check" type="button" data-k="${k}" aria-pressed="${!!done[k]}" aria-label="Set ${k + 1} done">${k + 1}</button>`).join("")}</div>
             ${x.rest ? `<button class="rest" type="button" data-rest="${x.rest}">Rest ${fmt(x.rest)}</button>` : ""}
-            <a class="demo" href="${Y(x.n)}" target="_blank" rel="noopener">Form demo ↗</a>
+            <a class="demo" href="${PIC(x.q || x.n)}" target="_blank" rel="noopener">Pictures ↗</a>
+            <a class="demo" href="${Y(x.q || x.n)}" target="_blank" rel="noopener">Video ↗</a>
           </div></article>`;
       });
     });
   }
+  if (p.path) html += `<div class="block">Pull-up progression</div><div class="note">${PATH}</div>`;
   html += `<div class="block">How to progress</div><div class="note">${PROG}</div>`;
   document.getElementById("main").innerHTML = html;
 }
